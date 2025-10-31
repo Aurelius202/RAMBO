@@ -1,0 +1,268 @@
+{
+  "Phosphates v1": {
+    "peak_position": 960,
+    "variability_range": [950, 970],
+    "biochemical_component": "Apatite crystals",
+    "tissue": ["Bone", "Spongy bone", "Compact bone"],
+    "references": ["Kozielski, 2011"]
+  },
+  "Phosphates v2": {
+    "peak_position": 440,
+    "variability_range": [430, 450],
+    "biochemical_component": "Apatite crystals",
+    "tissue": ["Bone", "Spongy bone", "Compact bone"],
+    "references": ["Kozielski, 2011"]
+  },
+  "Phosphates v4": {
+    "peak_position": 756,
+    "variability_range": [746, 776],
+    "biochemical_component": "Apatite crystals",
+    "tissue": ["Bone", "Spongy bone", "Compact bone"],
+    "references": ["Kozielski, 2011"]
+  },
+  "Proline (1)": {
+    "peak_position": 850,
+    "variability_range": [840, 860],
+    "biochemical_component": "Bone organic matrix",
+    "tissue": ["Bone", "Spongy bone", "Compact bone"],
+    "references": ["Unal, 2021"]
+  },
+  "Proline (2)": {
+    "peak_position": 920,
+    "variability_range": [910, 930],
+    "biochemical_component": "Bone organic matrix",
+    "tissue": ["Bone", "Spongy bone", "Compact bone"],
+    "references": ["Unal, 2021"]
+  },
+  "Proline (3)": {
+    "peak_position": 1044,
+    "variability_range": [1034, 1054],
+    "biochemical_component": "Proline ring/glucose/lactic acid",
+    "tissue": ["Adipose tissue", "Skeletal Muscle"],
+    "references": ["Huang, 2011", "Plesia, 2021"]
+  },
+  "Hydroxyproline": {
+    "peak_position": 875,
+    "variability_range": [865, 885],
+    "biochemical_component": "Bone organic matrix",
+    "tissue": ["Bone", "Spongy bone", "Compact bone", "Tendon", "Ligament", "Cartilage"],
+    "references": ["Unal, 2021", "Esmonde-White, 2014"]
+  },
+  "Phenylananine (1)": {
+    "peak_position": 1000,
+    "variability_range": [990, 1010],
+    "biochemical_component": "Proteins (Phenylalanine)",
+    "tissue": ["Adipose tissue", "Skeletal Muscle"],
+    "references": ["Plesia, 2021"]
+  },
+  "Phenylananine (2)": {
+    "peak_position": 1002,
+    "variability_range": [992, 1012],
+    "biochemical_component": "Bone organic matrix",
+    "tissue": ["Bone", "Spongy bone", "Compact bone"],
+    "references": ["Unal, 2021"]
+  },
+  "Phenylananine (3)": {
+    "peak_position": 1590,
+    "variability_range": [1580, 1600],
+    "biochemical_component": "Proteins (Phenylalanine)",
+    "tissue": ["Adipose tissue"],
+    "references": ["Huang, 2011"]
+  },
+  "Amide III (1)": {
+    "peak_position": 1250,
+    "variability_range": [1240, 1260],
+    "biochemical_component": ["Bone organic matrix", "Collagen amide"],
+    "tissue": ["Bone", "Spongy bone", "Compact bone", "Tendon", "Ligament", "Cartilage"],
+    "references": ["Unal, 2021", "Esmonde-White, 2014"]
+  },
+  "Amide III (2)": {
+    "peak_position": 1258,
+    "variability_range": [1248, 1268],
+    "biochemical_component": ["Proteins", "Lipids", "Adenine", "Cytosine"],
+    "tissue": ["Adipose tissue"],
+    "references": ["Huang, 2011"]
+  },
+  "Amide III (3)": {
+    "peak_position": 1300,
+    "variability_range": [1290, 1310],
+    "biochemical_component": ["Proteins", "Lipids"],
+    "tissue": ["Skeletal Muscle"],
+    "references": ["Plesia, 2021"]
+  },
+  "Amide I (1)": {
+    "peak_position": 1653,
+    "variability_range": [1643, 1663],
+    "biochemical_component": ["Bone organic matrix", "Collagen amide C=O", "Proteins, α-helix", "Lipid (C=O stretch)"],
+    "tissue": ["Bone", "Spongy bone", "Compact bone", "Tendon", "Ligament", "Cartilage", "Adipose tissue", "Skeletal Muscle"],
+    "references": ["Unal, 2021", "Esmonde-White, 2014", "Plesia, 2021", "Huang, 2011"]
+  },
+  "Amide I (2)": {
+    "peak_position": 1660,
+    "variability_range": [1650, 1670],
+    "biochemical_component": ["Bone organic matrix", "Collagen amide C=O"],
+    "tissue": ["Tendon", "Ligament", "Cartilage"],
+    "references": ["Esmonde-White, 2014"]
+  },
+  "C-H stretching (1)": {
+    "peak_position": 2900,
+    "variability_range": [2800, 3100],
+    "biochemical_component": "Bone organic matrix",
+    "tissue": ["Bone", "Spongy bone", "Compact bone"],
+    "references": ["Kozielski, 2011"]
+  },
+  "C-H stretching (2)": {
+    "peak_position": 2914,
+    "variability_range": [2904, 2924],
+    "biochemical_component": "CH band of lipids and proteins",
+    "tissue": ["Adipose tissue"],
+    "references": ["Huang, 2011"]
+  },
+  "Carbonates": {
+    "peak_position": 1080,
+    "variability_range": [1070, 1090],
+    "biochemical_component": "Bone organic matrix",
+    "tissue": ["Bone", "Spongy bone", "Compact bone"],
+    "references": ["Kozielski, 2011"]
+  },
+  "Collagen (1)": {
+    "peak_position": 822,
+    "variability_range": [812, 832],
+    "biochemical_component": "Collagen",
+    "tissue": ["Tendon", "Ligament", "Cartilage"],
+    "references": ["Esmonde-White, 2014"]
+  },
+  "Collagen (2)": {
+    "peak_position": 828,
+    "variability_range": [818, 838],
+    "biochemical_component": ["Collagen", "Tyrosine", "DNA"],
+    "tissue": ["Adipose tissue"],
+    "references": ["Huang, 2011"]
+  },
+  "Collagen (3)": {
+    "peak_position": 935,
+    "variability_range": [925, 945],
+    "biochemical_component": "Collagen",
+    "tissue": ["Adipose tissue", "Skeletal Muscle"],
+    "references": ["Huang, 2011", "Plesia, 2021"]
+  },
+  "Collagen (4)": {
+    "peak_position": 938,
+    "variability_range": [928, 948],
+    "biochemical_component": "Collagen",
+    "tissue": ["Tendon", "Ligament", "Cartilage"],
+    "references": ["Esmonde-White, 2014"]
+  },
+  "Protein (1)": {
+    "peak_position": 1002,
+    "variability_range": [992, 1012],
+    "biochemical_component": "Proteins",
+    "tissue": ["Tendon", "Ligament", "Cartilage", "Skeletal Muscle"],
+    "references": ["Esmonde-White, 2014", "Plesia, 2021"]
+  },
+  "Protein (2)": {
+    "peak_position": 1044,
+    "variability_range": [1034, 1054],
+    "biochemical_component": "Proteins",
+    "tissue": ["Adipose tissue", "Skeletal Muscle"],
+    "references": ["Huang, 2011", "Plesia, 2021"]
+  },
+  "Protein (4)": {
+    "peak_position": 1120,
+    "variability_range": [1110, 1130],
+    "biochemical_component": "Carotene",
+    "tissue": ["Adipose tissue"],
+    "references": ["Huang, 2011"]
+  },
+  "Protein (5)": {
+    "peak_position": 1160,
+    "variability_range": [1150, 1170],
+    "biochemical_component": "C-C/C-N stretching (proteins)",
+    "tissue": ["Adipose tissue", "Skeletal Muscle"],
+    "references": ["Huang, 2011", "Plesia, 2021"]
+  },
+  "Protein (6)": {
+    "peak_position": 1205,
+    "variability_range": [1195, 1215],
+    "biochemical_component": "Proteins",
+    "tissue": ["Adipose tissue", "Skeletal Muscle"],
+    "references": ["Huang, 2011", "Plesia, 2021"]
+  },
+  "Protein (7)": {
+    "peak_position": 1297,
+    "variability_range": [1287, 1307],
+    "biochemical_component": "Palmitic acid",
+    "tissue": ["Adipose tissue"],
+    "references": ["Huang, 2011"]
+  },
+  "Protein (8)": {
+    "peak_position": 1302,
+    "variability_range": [1292, 1312],
+    "biochemical_component": "CH3/CH2 twisting or bending mode of lipid/collagen",
+    "tissue": ["Adipose tissue"],
+    "references": ["Huang, 2011"]
+  },
+  "Protein (9)": {
+    "peak_position": 1335,
+    "variability_range": [1325, 1345],
+    "biochemical_component": "CH3/CH2 wagging, phospholipid/nucleic acid",
+    "tissue": ["Adipose tissue", "Skeletal Muscle"],
+    "references": ["Huang, 2011", "Plesia, 2021"]
+  },
+  "Protein (10)": {
+    "peak_position": 1383,
+    "variability_range": [1373, 1393],
+    "biochemical_component": "CH2 band",
+    "tissue": ["Adipose tissue"],
+    "references": ["Huang, 2011"]
+  },
+  "Protein (11)": {
+    "peak_position": 1437,
+    "variability_range": [1427, 1447],
+    "biochemical_component": "CH2 (lipids in normal tissue)",
+    "tissue": ["Adipose tissue"],
+    "references": ["Huang, 2011"]
+  },
+  "Protein (12)": {
+    "peak_position": 1442,
+    "variability_range": [1432, 1452],
+    "biochemical_component": "CH2 (lipids and proteins)",
+    "tissue": ["Adipose tissue", "Skeletal Muscle"],
+    "references": ["Huang, 2011", "Plesia, 2021"]
+  },
+  "Protein (13)": {
+    "peak_position": 1542,
+    "variability_range": [1532, 1552],
+    "biochemical_component": ["Single human RBC", "Amide II"],
+    "tissue": ["Adipose tissue"],
+    "references": ["Huang, 2011"]
+  },
+  "Protein (14)": {
+    "peak_position": 1614,
+    "variability_range": [1604, 1624],
+    "biochemical_component": "Carbon particles",
+    "tissue": ["Adipose tissue"],
+    "references": ["Huang, 2011"]
+  },
+  "Protein (15)": {
+    "peak_position": 1623,
+    "variability_range": [1613, 1633],
+    "biochemical_component": "Tryptophan",
+    "tissue": ["Adipose tissue"],
+    "references": ["Huang, 2011"]
+  },
+  "Chondroitin sulfate": {
+    "peak_position": 1063,
+    "variability_range": [1053, 1073],
+    "biochemical_component": "Chondroitin sulfate",
+    "tissue": ["Cartilage"],
+    "references": ["Esmonde-White, 2014"]
+  },
+  "Organic content": {
+    "peak_position": 1448,
+    "variability_range": [1438, 1458],
+    "biochemical_component": "Organic content",
+    "tissue": ["Tendon", "Ligament", "Cartilage"],
+    "references": ["Esmonde-White, 2014"]
+  }
+}
