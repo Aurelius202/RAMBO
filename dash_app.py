@@ -484,10 +484,9 @@ def preprocess_spectrum(data):
         spectrum = spectrum[:expected_length]
     return spectrum
 
-def predict_tissue_type(selected_files, model_path='predict.h5', tissue_types=None):
+def predict_tissue_type(selected_files, tissue_types=None):
     if tissue_types is None:
         tissue_types = ['Adipose tissue', 'Bone', 'Cartilage', 'Skeletal Muscle', 'Tendon']
-    model = load_model(model_path)
     spectra = []
     filenames = []
     for filename in selected_files:
