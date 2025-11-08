@@ -2,7 +2,7 @@ dash==2.14.2
 dash-bootstrap-components==2.0.0
 plotly==6.0.1
 pandas==2.0.3
-numpy==1.24.3
+numpy==1.26.4
 scipy==1.15.3
 setuptools>=69.5.1
 pip>=25.3.0
