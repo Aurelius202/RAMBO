@@ -7,7 +7,7 @@ from typing import Tuple
 import sys
 sys.path.append('/opt/anaconda3/lib/python3.12/site-packages')
 from orpl.baseline_removal import bubblefill
-import plotly.graph_objs as go  # Ajoutez cette ligne
+import plotly.graph_objs as go 
 import numpy as np
 from scipy import sparse
 from scipy.sparse.linalg import spsolve
