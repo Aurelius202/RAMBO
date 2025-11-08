@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 from scipy.signal import savgol_filter, find_peaks
 from typing import Tuple
 import sys
-sys.path.append('/opt/anaconda3/lib/python3.12/site-packages')
 from orpl.baseline_removal import bubblefill
 import plotly.graph_objs as go  
 import numpy as np
