@@ -9,3 +9,5 @@ pip>=25.3.0
 wheel>=0.40.0
 gunicorn
 tensorflow>=2.18.0
+matplotlib>=3.8.2 
+git+https://github.com/mr-sheg/orpl.git
