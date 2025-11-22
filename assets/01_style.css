@@ -7,6 +7,26 @@ body {
     color: #333;
 }
 
+
+/* Styles pour les en-têtes du tableau */
+table th {
+    background-color: #ff8c11;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    padding: 8px;
+    text-align: center;
+}
+
+/* Styles pour les cellules du tableau */
+table td {
+    border: 1px solid #ddd;
+    padding: 5px;
+    text-align: left;
+    font-family: 'Poppins', sans-serif;
+    font-size: 10px;
+}
+
 /* Styles pour les titres */
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Poppins', sans-serif;
@@ -144,7 +164,7 @@ button:active {
 
 /* Styles pour les inputs */
 input {
-    margin-bottom: 20px;
+    margin-bottom: 0px;
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ddd;
@@ -168,11 +188,18 @@ input {
 
 .form-group label {
     margin-right: 10px;
-    width: 150px; /* Ajustez la largeur selon vos besoins */
+    width: 20px; 
     text-align: right;
 }
 
 .form-group input,
 .form-group select {
     flex-grow: 1;
+}
+
+
+.dropdown-menu {
+    max-height: 200px;
+    margin: 10px;
+    overflow-y: auto;
 }
