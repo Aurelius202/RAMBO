@@ -53,7 +53,7 @@ def create_input_field(label_text, input_id, input_type='text', value=None, styl
         html.Span(label_text, style={'margin-right': '5px'}),
         input_element
     ], style={'display': 'flex', 'align-items': 'center', 'margin-bottom': '10px'})
-# Define the layout of the app
+
 app.layout = dbc.Container([
     # Stores for global data
     dcc.Store(id='selected-files-store', data=[]),
@@ -136,23 +136,41 @@ app.layout = dbc.Container([
                     "Smooths the data to reduce noise. Reference: Savitzky, A., Golay, M. J. E. (1964).",
                     target="savgol-checkbox"
                 ),
-                html.Div(id='savgol-params-container', children=[
-                    dbc.Row([
-                        dbc.Col(dbc.Input(id='savgol-window', type='number', min=1, max=100, value=11), width=3),
-                        dbc.Col(dbc.FormFeedback(id='savgol-window-feedback', type='invalid')),
-                        dbc.Col(dbc.Tooltip(
-                            "Window size for the Savitzky-Golay filter",
-                            target="savgol-window"
-                        )),
-                        dbc.Col(html.Span('(Window size)'), width='auto'),
-                        dbc.Col(dbc.Input(id='savgol-order', type='number', min=1, max=10, value=3), width=3),
-                        dbc.Col(dbc.Tooltip(
-                            "Polynomial order for the Savitzky-Golay filter",
-                            target="savgol-order"
-                        )),
-                        dbc.Col(html.Span('(Polynomial order)'), width='auto')
-                    ], style={'display':'flex', 'align-items' : 'center', 'margin-top': '10px'}),
-                ]),
+                html.Div(
+                    id='savgol-params-container',
+                    children=[
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    [
+                                        html.Span("Window size", style={"margin-right": "5px"}),
+                                        dbc.Input(id='savgol-window', type='number', min=1, max=100, value=11),
+                                        dbc.FormFeedback(id='savgol-window-feedback', type='invalid'),
+                                        dbc.Tooltip(
+                                            "Window size for the Savitzky-Golay filter",
+                                            target="savgol-window"
+                                        ),
+                                    ],
+                                    width="auto",
+                                ),
+                                dbc.Col(
+                                    [
+                                        html.Span("Polynomial order", style={"margin-right": "5px"}),
+                                        dbc.Input(id='savgol-order', type='number', min=1, max=10, value=3),
+                                        dbc.Tooltip(
+                                            "Polynomial order for the Savitzky-Golay filter",
+                                            target="savgol-order"
+                                        ),
+                                    ],
+                                    width="auto",
+                                ),
+                            ],
+                            align="center",
+                            style={'margin-top': '10px'}
+                        ),
+                    ]
+                )
+
             ]),
             html.Hr(),
 
@@ -202,8 +220,8 @@ app.layout = dbc.Container([
                     dcc.Dropdown(
                         id='norm-method-combined',
                         options=[
-                            {'label': 'Max - Min-Max', 'value': 'max_minmax'},
-                            {'label': 'Max - Vector', 'value': 'max_vector'},
+                            {'label': 'Min-Max', 'value': 'max_minmax'},
+                            {'label': 'Vector', 'value': 'max_vector'},
                             {'label': 'Quantile - Min-Max', 'value': 'quantile_minmax'},
                             {'label': 'Quantile - Vector', 'value': 'quantile_vector'},
                             {'label': 'Sum of Intensities', 'value': 'sum'},
@@ -214,7 +232,7 @@ app.layout = dbc.Container([
                     ),
                     dbc.Input(id='quantile-input', type='text', value='0.95', style={'display': 'none'}),
                     dbc.Input(id='reference-peak-input', type='text', placeholder='Reference Peak Position', style={'display': 'none'}),
-                ]),
+                ], style={'margin-top': '15px', 'padding-top': '15px'}),
             ]),
             html.Hr(),
 
@@ -262,28 +280,62 @@ app.layout = dbc.Container([
             # Peak search section
             html.Div([
                 html.Label('Search Peaks at Specific Positions:'),
-                dbc.Row([
-                    dbc.Col(dbc.Input(id='peak-positions-input', type='text', value='', placeholder='e.g., 1000, 1200, 1500', style={'width': '200px'}), width=4),
-                    dbc.Col(html.Span(" (Comma-separated peak positions)", style={'margin-left': '5px'}), width='auto'),
-                    dbc.Col(dbc.Tooltip(
-                        "Enter the peak positions to search for, separated by commas",
-                        target="peak-positions-input"
-                    )),
-                ]),
-                dbc.Row([
-                    dbc.Col(dbc.Input(id='tolerance-input', type='text', value='5.0', style={'width': '100px'}), width=2),
-                    dbc.Col(html.Span(" (Tolerance Value)", style={'margin-left': '5px'}), width='auto'),
-                    dbc.Col(dbc.Tooltip(
-                        "Tolerance for matching peaks",
-                        target="tolerance-input"
-                    )),
-                ]),
-                dbc.Button("Export Specific Peaks", id="export-peak-table-button", n_clicks=0, color="primary", style={'margin-top': '10px', 'width': '80%'}),  # Centered button
-                dcc.Download(id="download-peak-table-data")
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            [
+                                html.Span("Peak Positions", style={"margin-right": "5px"}),
+                                dbc.Input(
+                                    id='peak-positions-input',
+                                    type='text',
+                                    value='',
+                                    placeholder='e.g., 1000, 1200, 1500',
+                                    style={'width': '200px'}
+                                ),
+                                dbc.Tooltip(
+                                    "Enter the peak positions to search for, separated by commas",
+                                    target="peak-positions-input"
+                                ),
+                            ],
+                            width="auto",
+                            style={"display": "flex", "align-items": "center"}
+                        ),
+                    ],
+                    justify="center",
+                    style={'margin-bottom': '10px'}
+                ),
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            [
+                                html.Span("Tolerance", style={"margin-right": "5px"}),
+                                dbc.Input(
+                                    id='tolerance-input',
+                                    type='text',
+                                    value='5.0',
+                                    style={'width': '100px'}
+                                ),
+                                dbc.Tooltip(
+                                    "Tolerance for matching peaks",
+                                    target="tolerance-input"
+                                ),
+                            ],
+                            width="auto",
+                            style={"display": "flex", "align-items": "center"}
+                        ),
+                    ],
+                    justify="center"
+                ),
+                dbc.Row(
+                    [
+                    dbc.Button("Export Specific Peaks", id="export-peak-table-button", n_clicks=0, color="primary", style={'margin-top': '10px', 'width': '80%'}), 
+                    dcc.Download(id="download-peak-table-data")], justify="center"
+                ),
             ]),
+            
             html.Hr(),
 
-            # Export buttons (centered)
+            # Export buttons
             html.Div([
                 dbc.Button("Export Raw Data", id="export-raw-button", n_clicks=0, color="success", style={'margin-top': '10px', 'width': '80%'})
             ], style={'display': 'flex', 'justify-content': 'center'}),
@@ -312,11 +364,12 @@ app.layout = dbc.Container([
             ]),
             html.Hr(),
 
-            # Bottom logos (centered)
+            # Bottom logos 
             html.Div([
                 html.Img(src='/assets/HTlogo.png', style={'height':'100px', 'width':'auto', 'margin': '10px'}),
-                html.Img(src='/assets/UniBaslogo.png', style={'height':'100px', 'width':'auto', 'margin': '10px'}),
-            ], style={'display': 'flex', 'justify-content': 'center', 'align-items': 'center', 'gap': '20px'})
+                html.Img(src='/assets/UniBaslogo.png', style={'height':'100px', 'width':'auto', 'margin': '10px'})
+            ], style={'display': 'flex', 'justify-content': 'center', 'align-items': 'center', 'gap': '20px'}),
+            html.Legend('This work of the Interdisciplinary Thematic Institute HealthTech, as part of the ITI 2021-2028 program of the University of Strasbourg, CNRS and Inserm, was supported by IdEx Unistra (ANR-10-IDEX-0002) and SFRI (STRAT’US project, ANR-20-SFRI-0012) within the framework of France 2030.', style={'align-self': 'center', 'margin': '10px', 'font-size': '12px'}),
         ], style={'width': '30%', 'height': '90vh', 'overflow-y': 'auto', 'margin': '10px', 'padding': '10px', 'box-shadow': '0 0 10px rgba(0,0,0,0.1)'}),  # Left column style
 
         # Center column: Graphs
@@ -377,7 +430,7 @@ app.layout = dbc.Container([
             html.Div([
                 dbc.Button("Export Table", id="export-table-button", n_clicks=0, color="primary", style={'margin-top': '10px', 'width': '100%'}),
                 dbc.Button("Export All Tables", id="export-all-tables-button", n_clicks=0, color="warning", style={'margin-top': '10px', 'width': '100%'})
-            ], style={'display': 'flex', 'justify-content': 'center'}),  # Centered button
+            ], style={'display': 'flex', 'justify-content': 'center'}),  
 
             dcc.Download(id="download-table-data"),
             dcc.Download(id="download-all-tables-data"),
@@ -469,24 +522,56 @@ def update_baseline_params_layout(method):
         als_lambda_style = {'display': 'block'}
         als_p_style = {'display': 'block'}
     return [
-        dbc.Row([
-            dbc.Col(dbc.Input(id='poly-order', type='number', min=1, max=10, value=4, style={'width': '100px', **poly_order_style}), width=2),
-            dbc.Col(html.Span(" (Polynomial Order)", style={'margin-left': '5px', **poly_order_style}), width='auto'),
-            dbc.Col(dbc.Tooltip("Polynomial order for baseline fitting", target="poly-order"), style=poly_order_style),
-        ]),
-        dbc.Row([
-            dbc.Col(dbc.Input(id='bubble-width', type='number', min=1, max=100, value=50, style={'width': '100px', **bubble_width_style}), width=2),
-            dbc.Col(html.Span(" (Bubble Width)", style={'margin-left': '5px', **bubble_width_style}), width='auto'),
-            dbc.Col(dbc.Tooltip("Width of the bubble for baseline removal", target="bubble-width"), style=bubble_width_style),
-        ]),
-        dbc.Row([
-            dbc.Col(html.Span("Lambda (λ)", id='lambda-label', style={'margin-left': '5px', **als_lambda_style}), width='auto'),
-            dbc.Col(dcc.Input(id='als-lambda', type='number', value=100000, style={'width': '100px', **als_lambda_style}), width=2),
-            dbc.Col(dbc.Tooltip("Smoothness parameter for ALS", target="als-lambda"), style=als_lambda_style),
-            dbc.Col(html.Span("P", id='p-label', style={'margin-left': '5px', **als_p_style}), width='auto'),
-            dbc.Col(dcc.Input(id='als-p', type='number', value=0.01, style={'width': '100px', **als_p_style}), width=2),
-            dbc.Col(dbc.Tooltip("Asymmetry parameter for ALS", target="als-p"), style=als_p_style),
-        ])
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.Span("Polynomial Order", style={"margin-right": "5px", **poly_order_style}),
+                        dbc.Input(id="poly-order", type="number", min=1, max=10, value=4, style={"width": "100px", **poly_order_style}),
+                        dbc.Tooltip("Polynomial order for baseline fitting", target="poly-order"),
+                    ],
+                    width="auto",
+                ),
+            ],
+            align="center",
+        ),
+
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.Span("Bubble Width", style={"margin-right": "5px", **bubble_width_style}),
+                        dbc.Input(id="bubble-width", type="number", min=1, max=100, value=50, style={"width": "100px", **bubble_width_style}),
+                        dbc.Tooltip("Width of the bubble for baseline removal", target="bubble-width"),
+                    ],
+                    width="auto",
+                ),
+            ],
+            align="center",
+        ),
+
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.Span("Lambda (λ)", id="lambda-label", style={"margin-right": "5px", **als_lambda_style}),
+                        dcc.Input(id="als-lambda", type="number", value=100000, style={"width": "100px", **als_lambda_style}),
+                        dbc.Tooltip("Smoothness parameter for ALS", target="als-lambda"),
+                    ],
+                    width="auto",
+                ),
+                dbc.Col(
+                    [
+                        html.Span("P", id="p-label", style={"margin-right": "5px", **als_p_style}),
+                        dcc.Input(id="als-p", type="number", value=0.01, style={"width": "100px", **als_p_style}),
+                        dbc.Tooltip("Asymmetry parameter for ALS", target="als-p"),
+                    ],
+                    width="auto",
+                ),
+            ],
+            align="center",
+        )
+
     ]
 @app.callback(
     Output('tissue-dropdown', 'style'),

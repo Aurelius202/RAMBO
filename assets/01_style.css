@@ -160,6 +160,7 @@ button:active {
 /* Styles pour les checklists */
 .checklist {
     margin-bottom: 20px;
+    vertical-align: middle;
 }
 
 /* Styles pour les inputs */
