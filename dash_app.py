@@ -12,6 +12,8 @@ import json
 import logging
 from io import BytesIO, StringIO
 from scipy.signal import savgol_filter
+from scipy.ndimage import median_filter
+from scipy.stats import median_abs_deviation
 from tensorflow.keras.models import load_model
 from src.analysis.spectrum_processing import (
     polynomial_fitting,
@@ -23,23 +25,29 @@ from src.analysis.spectrum_processing import (
     normalize_spectrum_sum,
     normalize_spectrum_reference
 )
+
 # Configuration and global variables
 DEFAULT_DELIMITER = ','
 DEFAULT_SKIPROWS = 1
 DEFAULT_X_MIN = 0
 DEFAULT_X_MAX = None
 tissues = ['Adipose tissue', 'Bone', 'Cartilage', 'Skeletal Muscle', 'Tendon']
+
 # Load peak assignments
 with open('data/peak_assignments.json', 'r') as file:
     peak_assignments = json.load(file)
+
 # Load model
 model = load_model('predict.h5')
+
 # Initialize Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap'])
 app.title = "RAMBO"
 app.config.suppress_callback_exceptions = True
+
 # Global variable for storing file data
 file_data = {}
+
 def create_input_field(label_text, input_id, input_type='text', value=None, style=None, placeholder=None):
     """Create an input field with a label."""
     input_element = dcc.Input(
@@ -54,6 +62,19 @@ def create_input_field(label_text, input_id, input_type='text', value=None, styl
         input_element
     ], style={'display': 'flex', 'align-items': 'center', 'margin-bottom': '10px'})
 
+def remove_cosmic_rays(spectrum, window_size=5, threshold=3):
+    """
+    Remove cosmic rays from a spectrum using a rolling median and MAD.
+    """
+    if window_size % 2 == 0:
+        window_size += 1  # Ensure window size is odd
+    median = median_filter(spectrum, size=window_size)
+    mad = median_abs_deviation(spectrum)
+    diff = spectrum - median
+    mask = np.abs(diff) > threshold * mad
+    spectrum[mask] = median[mask]
+    return spectrum
+
 app.layout = dbc.Container([
     # Stores for global data
     dcc.Store(id='selected-files-store', data=[]),
@@ -63,11 +84,10 @@ app.layout = dbc.Container([
     html.Div([
         # Left column: Upload, settings, and controls
         html.Div([
-            # App logo 
+            # App logo
             html.Div([
                 html.Img(src='/assets/logo.png', style={'height':'150px', 'width':'auto', 'margin': 'auto', 'display': 'block'}),
             ], style={'text-align': 'center', 'width': '100%'}),
-
             # App title and description
             html.H2("Raman-Assisted Molecular Biological Observations", style={'margin-top': '4px', 'text-align': 'center'}),
             html.P("Upload your Raman spectra files of Adipose tissue, Bone, Cartilage, Skeletal Muscle or Tendon.", style={'text-align': 'center'}),
@@ -79,7 +99,7 @@ app.layout = dbc.Container([
                     id="collapse-button",
                     color="secondary",
                     className="mb-3",
-                    style={'width': '80%'} 
+                    style={'width': '80%'}
                 ),
                 dbc.Collapse(
                     html.Div([
@@ -91,9 +111,9 @@ app.layout = dbc.Container([
                     id="collapse",
                     is_open=False,
                 ),
-            ], style={'display': 'flex', 'flex-direction': 'column', 'align-items': 'center', 'width': '100%'}),  # Center all children horizontally
+            ], style={'display': 'flex', 'flex-direction': 'column', 'align-items': 'center', 'width': '100%'}),
 
-            # File upload section 
+            # File upload section
             html.Div([
                 dcc.Upload(
                     id='upload-data',
@@ -108,19 +128,68 @@ app.layout = dbc.Container([
                     multiple=True
                 ),
                 html.Div(id='feedback-message', style={'margin-top': '10px', 'text-align': 'center'})
-            ], style={'display': 'flex', 'flex-direction': 'column', 'align-items': 'center', 'width': '100%'}),  
+            ], style={'display': 'flex', 'flex-direction': 'column', 'align-items': 'center', 'width': '100%'}),
 
             # File selection
             html.Div([
                 dcc.Dropdown(
-                id='file-dropdown',
-                multi=True,
-                placeholder="Select files to analyze",
-                className="dropdown-menu position-static d-grid gap-1 p-2 rounded-3 mx-0 shadow w-220px",
-                style={'z-index': 1050, 'position': 'relative', 'width': '80%'}
+                    id='file-dropdown',
+                    multi=True,
+                    placeholder="Select files to analyze",
+                    className="dropdown-menu position-static d-grid gap-1 p-2 rounded-3 mx-0 shadow w-220px",
+                    style={'z-index': 1050, 'position': 'relative', 'width': '80%'}
                 ),
                 dbc.Button("Select All", id="select-all-button", n_clicks=0, color="primary", style={'margin-top': '10px', 'width': '20%'})
-            ], style={'display': 'flex', 'justify-content': 'center'}), 
+            ], style={'display': 'flex', 'justify-content': 'center'}),
+
+            html.Hr(),
+
+            # Cosmic Ray Removal section
+            html.Div([
+                dbc.Checklist(
+                    id='cosmic-ray-checkbox',
+                    options=[{'label': 'Remove Cosmic Rays', 'value': 'apply'}],
+                    value=[],
+                    inline=True
+                ),
+                dbc.Tooltip(
+                    "Removes cosmic ray spikes from the spectrum using a rolling median filter.",
+                    target="cosmic-ray-checkbox"
+                ),
+                html.Div(
+                    id='cosmic-ray-params-container',
+                    children=[
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    [
+                                        html.Span("Window size", style={"margin-right": "5px"}),
+                                        dbc.Input(id='cosmic-ray-window', type='number', min=1, max=100, value=5),
+                                        dbc.Tooltip(
+                                            "Window size for the cosmic ray removal filter",
+                                            target="cosmic-ray-window"
+                                        ),
+                                    ],
+                                    width="auto",
+                                ),
+                                dbc.Col(
+                                    [
+                                        html.Span("Threshold", style={"margin-right": "5px"}),
+                                        dbc.Input(id='cosmic-ray-threshold', type='number', min=1, max=10, value=3),
+                                        dbc.Tooltip(
+                                            "Threshold for detecting cosmic rays (in standard deviations)",
+                                            target="cosmic-ray-threshold"
+                                        ),
+                                    ],
+                                    width="auto",
+                                ),
+                            ],
+                            align="center",
+                            style={'margin-top': '10px', 'display': 'none'}
+                        ),
+                    ]
+                )
+            ]),
 
             html.Hr(),
 
@@ -129,7 +198,7 @@ app.layout = dbc.Container([
                 dbc.Checklist(
                     id='savgol-checkbox',
                     options=[{'label': 'Apply Savitzky-Golay Filter', 'value': 'apply'}],
-                    value=['apply'],
+                    value=[],
                     inline=True
                 ),
                 dbc.Tooltip(
@@ -166,12 +235,12 @@ app.layout = dbc.Container([
                                 ),
                             ],
                             align="center",
-                            style={'margin-top': '10px'}
+                            style={'margin-top': '10px', 'display': 'none'}
                         ),
                     ]
                 )
-
             ]),
+
             html.Hr(),
 
             # Baseline removal section
@@ -179,7 +248,7 @@ app.layout = dbc.Container([
                 dbc.Checklist(
                     id='baseline-checkbox',
                     options=[{'label': 'Apply Baseline Removal', 'value': 'apply'}],
-                    value=['apply'],
+                    value=[],
                     inline=True
                 ),
                 html.Div(id='baseline-params-container', children=[
@@ -202,10 +271,25 @@ app.layout = dbc.Container([
                                 "Polynomial order for baseline fitting",
                                 target="poly-order"
                             )),
-                        ])
-                    ]),
-                ]),
+                        ], style={'display': 'none'}),
+                        dbc.Row([
+                            dbc.Col(dbc.Input(id='bubble-width', type='number', min=1, max=100, value=50, style={'width': '100px'}), width=2),
+                            dbc.Col(html.Span(" (Bubble Width)", style={'margin-left': '5px'}), width='auto'),
+                            dbc.Col(dbc.Tooltip(
+                                "Width of the bubble for baseline removal",
+                                target="bubble-width"
+                            )),
+                        ], style={'display': 'none'}),
+                        dbc.Row([
+                            dbc.Col(dbc.Input(id='als-lambda', type='number', value=100000, style={'width': '100px'}), width=2),
+                            dbc.Col(html.Span(" (Lambda)", style={'margin-left': '5px'}), width='auto'),
+                            dbc.Col(dbc.Input(id='als-p', type='number', value=0.01, style={'width': '100px'}), width=2),
+                            dbc.Col(html.Span(" (P)", style={'margin-left': '5px'}), width='auto'),
+                        ], style={'display': 'none'}),
+                    ])
+                ], style={'display': 'none'}),
             ]),
+
             html.Hr(),
 
             # Normalization section
@@ -213,7 +297,7 @@ app.layout = dbc.Container([
                 dbc.Checklist(
                     id='norm-checkbox',
                     options=[{'label': 'Apply Normalization', 'value': 'apply'}],
-                    value=['apply'],
+                    value=[],
                     inline=True
                 ),
                 html.Div(id='norm-params-container', children=[
@@ -232,8 +316,9 @@ app.layout = dbc.Container([
                     ),
                     dbc.Input(id='quantile-input', type='text', value='0.95', style={'display': 'none'}),
                     dbc.Input(id='reference-peak-input', type='text', placeholder='Reference Peak Position', style={'display': 'none'}),
-                ], style={'margin-top': '15px', 'padding-top': '15px'}),
+                ], style={'margin-top': '15px', 'padding-top': '15px', 'display': 'none'}),
             ]),
+
             html.Hr(),
 
             # Peak detection section
@@ -275,6 +360,7 @@ app.layout = dbc.Container([
                     )),
                 ]),
             ]),
+
             html.Hr(),
 
             # Peak search section
@@ -328,22 +414,20 @@ app.layout = dbc.Container([
                 ),
                 dbc.Row(
                     [
-                    dbc.Button("Export Specific Peaks", id="export-peak-table-button", n_clicks=0, color="primary", style={'margin-top': '10px', 'width': '80%'}), 
+                    dbc.Button("Export Specific Peaks", id="export-peak-table-button", n_clicks=0, color="primary", style={'margin-top': '10px', 'width': '80%'}),  # noqa: E128
                     dcc.Download(id="download-peak-table-data")], justify="center"
                 ),
             ]),
-            
+
             html.Hr(),
 
             # Export buttons
             html.Div([
                 dbc.Button("Export Raw Data", id="export-raw-button", n_clicks=0, color="success", style={'margin-top': '10px', 'width': '80%'})
             ], style={'display': 'flex', 'justify-content': 'center'}),
-
             html.Div([
                 dbc.Button("Export Processed Data", id="export-processed-button", n_clicks=0, color="info", style={'margin-top': '10px', 'width': '80%'})
             ], style={'display': 'flex', 'justify-content': 'center'}),
-
             html.Div([
                 dbc.Button("Export All Processed Data", id="export-all-processed-button", n_clicks=0, color="danger", style={'margin-top': '10px', 'width': '80%'})
             ], style={'display': 'flex', 'justify-content': 'center'}),
@@ -355,6 +439,7 @@ app.layout = dbc.Container([
                 html.Label('Signal to Noise Ratio (SNR):'),
                 html.Div(id='snr-output', style={'margin-top': '10px'})
             ]),
+
             html.Hr(),
 
             # Predicted tissue types section
@@ -362,15 +447,16 @@ app.layout = dbc.Container([
                 html.Label('Predicted Tissue Types:'),
                 html.Div(id='tissue-type-output', style={'margin-top': '10px'})
             ]),
+
             html.Hr(),
 
-            # Bottom logos 
+            # Bottom logos
             html.Div([
                 html.Img(src='/assets/HTlogo.png', style={'height':'100px', 'width':'auto', 'margin': '10px'}),
                 html.Img(src='/assets/UniBaslogo.png', style={'height':'100px', 'width':'auto', 'margin': '10px'})
             ], style={'display': 'flex', 'justify-content': 'center', 'align-items': 'center', 'gap': '20px'}),
             html.Legend('This work of the Interdisciplinary Thematic Institute HealthTech, as part of the ITI 2021-2028 program of the University of Strasbourg, CNRS and Inserm, was supported by IdEx Unistra (ANR-10-IDEX-0002) and SFRI (STRAT’US project, ANR-20-SFRI-0012) within the framework of France 2030.', style={'align-self': 'center', 'margin': '10px', 'font-size': '12px'}),
-        ], style={'width': '30%', 'height': '90vh', 'overflow-y': 'auto', 'margin': '10px', 'padding': '10px', 'box-shadow': '0 0 10px rgba(0,0,0,0.1)'}),  # Left column style
+        ], style={'width': '30%', 'height': '90vh', 'overflow-y': 'auto', 'margin': '10px', 'padding': '10px', 'box-shadow': '0 0 10px rgba(0,0,0,0.1)'}),
 
         # Center column: Graphs
         html.Div([
@@ -398,8 +484,8 @@ app.layout = dbc.Container([
             ),
             html.Hr(),
             html.Label('Spectra Colors:'),
-            html.Div(id='color-pickers', style={'display': 'flex', 'flex-wrap': 'wrap', 'justify-content': 'center'}),  # Center color pickers
-        ], style={'width': '35%', 'height': '90vh', 'overflow-y': 'auto', 'margin': '10px', 'padding': '10px', 'box-shadow': '0 0 10px rgba(0,0,0,0.1)'}),  # Center column style
+            html.Div(id='color-pickers', style={'display': 'flex', 'flex-wrap': 'wrap', 'justify-content': 'center'}),
+        ], style={'width': '35%', 'height': '90vh', 'overflow-y': 'auto', 'margin': '10px', 'padding': '10px', 'box-shadow': '0 0 10px rgba(0,0,0,0.1)'}),
 
         # Right column: Peaks table
         html.Div([
@@ -426,176 +512,120 @@ app.layout = dbc.Container([
                 ],
                 style={'width': '100%', 'display': 'block', 'overflow-y': 'scroll', 'height': '100%'}
             ),
-
             html.Div([
                 dbc.Button("Export Table", id="export-table-button", n_clicks=0, color="primary", style={'margin-top': '10px', 'width': '100%'}),
                 dbc.Button("Export All Tables", id="export-all-tables-button", n_clicks=0, color="warning", style={'margin-top': '10px', 'width': '100%'})
-            ], style={'display': 'flex', 'justify-content': 'center'}),  
-
+            ], style={'display': 'flex', 'justify-content': 'center'}),
             dcc.Download(id="download-table-data"),
             dcc.Download(id="download-all-tables-data"),
-            
             dcc.Markdown('''
                 The Raman spectroscopy peak assignments for various biological tissues are documented across several scientific articles:
-
                 - **Adipose tissue:** : Kozielski, K. *et al.* Optics Express **19**, 22892–22907 (2011). [10.1364/OE.19.022892](https://doi.org/10.1364/OE.19.022892)
-
                 - **Skeletal muscle:** : Kozielski, K. *et al.* Optics Express **19**, 22892–22907 (2011). [10.1364/OE.19.022892](https://doi.org/10.1364/OE.19.022892) & Plesia, S. *et al.* ACS Chemical Neuroscience **12**, 3268–3278 (2021). [10.1021/acschemneuro.0c00794](https://doi.org/10.1021/acschemneuro.0c00794)
-
                 - **Cartilage:** : Esmonde-White, K. *et al.* Applied Spectroscopy **68**, 1366–1374 (2014). [10.1366/14-07592](https://doi.org/10.1366/14-07592)
-
                 - **Tendon:** : Esmonde-White, K. *et al.* Applied Spectroscopy **68**, 1366–1374 (2014). [10.1366/14-07592](https://doi.org/10.1366/14-07592)
-
                 - **Bone:** : Unal, B. *et al.* Analyst **146**, 6269–6279 (2021). [10.1039/D1AN01560E](https://doi.org/10.1039/D1AN01560E)
                 ''', style={'align-self': 'center', 'margin': '10px', 'font-size': '12px'}),
+        ], style={'width': '30%', 'height': '90vh', 'overflow-y': 'auto', 'margin': '10px', 'padding': '10px', 'box-shadow': '0 0 10px rgba(0,0,0,0.1)'}),
+    ], style={'display': 'flex', 'flex-direction': 'row', 'justify-content': 'space-between', 'height': '100vh'})
+], fluid=True, className='dashboard-container', style={'height': '100vh'})
 
-        ], style={'width': '30%', 'height': '90vh', 'overflow-y': 'auto', 'margin': '10px', 'padding': '10px', 'box-shadow': '0 0 10px rgba(0,0,0,0.1)'})  # Right column style
-    ], style={'display': 'flex', 'flex-direction': 'row', 'justify-content': 'space-between', 'height': '100vh'})  # Main row container
-], fluid=True, className='dashboard-container', style={'height': '100vh'})  # Main app container
-
-
-# Define callbacks for toggling visibility of parameter inputs
+# Callbacks for toggling visibility of parameter inputs
 @app.callback(
     Output('savgol-params-container', 'style'),
-    [Input('savgol-checkbox', 'value')]
+    Input('savgol-checkbox', 'value')
 )
 def toggle_savgol_params(checkbox_value):
     if checkbox_value and 'apply' in checkbox_value:
         return {'display': 'block', 'margin-top': '15px', 'padding-top': '15px'}
     else:
         return {'display': 'none'}
+
+@app.callback(
+    Output('cosmic-ray-params-container', 'style'),
+    Input('cosmic-ray-checkbox', 'value')
+)
+def toggle_cosmic_ray_params(checkbox_value):
+    if checkbox_value and 'apply' in checkbox_value:
+        return {'display': 'block', 'margin-top': '15px', 'padding-top': '15px'}
+    else:
+        return {'display': 'none'}
+
 @app.callback(
     Output('baseline-params-container', 'style'),
-    [Input('baseline-checkbox', 'value')]
+    Input('baseline-checkbox', 'value')
 )
 def toggle_baseline_params(checkbox_value):
     if checkbox_value and 'apply' in checkbox_value:
         return {'display': 'block', 'margin-top': '15px', 'padding-top': '15px'}
     else:
         return {'display': 'none'}
+
 @app.callback(
-    Output('norm-params-container', 'children'),
-    [Input('norm-checkbox', 'value')]
+    Output('norm-params-container', 'style'),
+    Input('norm-checkbox', 'value')
 )
 def toggle_norm_params(checkbox_value):
     if checkbox_value and 'apply' in checkbox_value:
-        return dbc.Row([
-            dbc.Col(dcc.Dropdown(
-                id='norm-method-combined',
-                options=[
-                    {'label': 'Max - Min-Max', 'value': 'max_minmax'},
-                    {'label': 'Max - Vector', 'value': 'max_vector'},
-                    {'label': 'Quantile - Min-Max', 'value': 'quantile_minmax'},
-                    {'label': 'Quantile - Vector', 'value': 'quantile_vector'},
-                    {'label': 'Sum of Intensities', 'value': 'sum'},
-                    {'label': 'Reference Peak', 'value': 'reference'}
-                ],
-                value='max_minmax',
-                clearable=False
-            ), width=8),
-            dbc.Col(dbc.Input(id='quantile-input', type='text', value='0.95', style={'display': 'none'}), width=2),
-            dbc.Col(dbc.Input(id='reference-peak-input', type='text', placeholder='Reference Peak Position', style={'display': 'none'}), width=2)
-        ])
+        return {'display': 'block', 'margin-top': '15px', 'padding-top': '15px'}
     else:
-        return []
-@app.callback(
-    [Output('quantile-input', 'style'),
-     Output('reference-peak-input', 'style')],
-    [Input('norm-method-combined', 'value')]
-)
-def update_norm_input_visibility(norm_method):
-    quantile_style = {'display': 'none'}
-    reference_style = {'display': 'none'}
-    if norm_method in ['quantile_minmax', 'quantile_vector']:
-        quantile_style = {'display': 'block'}
-    elif norm_method == 'reference':
-        reference_style = {'display': 'block'}
-    return quantile_style, reference_style
-@app.callback(
-    Output("collapse", "is_open"),
-    [Input("collapse-button", "n_clicks")],
-    [State("collapse", "is_open")],
-)
-def toggle_collapse(n, is_open):
-    if n:
-        return not is_open
-    return is_open
-@app.callback(
-    Output('baseline-method-params', 'children'),
-    [Input('baseline-method', 'value')]
-)
-def update_baseline_params_layout(method):
-    poly_order_style = {'display': 'none'}
-    bubble_width_style = {'display': 'none'}
-    als_lambda_style = {'display': 'none'}
-    als_p_style = {'display': 'none'}
-    if method == 'poly':
-        poly_order_style = {'display': 'block'}
-    elif method == 'bubble':
-        bubble_width_style = {'display': 'block'}
-    elif method == 'als':
-        als_lambda_style = {'display': 'block'}
-        als_p_style = {'display': 'block'}
-    return [
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        html.Span("Polynomial Order", style={"margin-right": "5px", **poly_order_style}),
-                        dbc.Input(id="poly-order", type="number", min=1, max=10, value=4, style={"width": "100px", **poly_order_style}),
-                        dbc.Tooltip("Polynomial order for baseline fitting", target="poly-order"),
-                    ],
-                    width="auto",
-                ),
-            ],
-            align="center",
-        ),
+        return {'display': 'none'}
 
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        html.Span("Bubble Width", style={"margin-right": "5px", **bubble_width_style}),
-                        dbc.Input(id="bubble-width", type="number", min=1, max=100, value=50, style={"width": "100px", **bubble_width_style}),
-                        dbc.Tooltip("Width of the bubble for baseline removal", target="bubble-width"),
-                    ],
-                    width="auto",
-                ),
-            ],
-            align="center",
-        ),
-
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        html.Span("Lambda (λ)", id="lambda-label", style={"margin-right": "5px", **als_lambda_style}),
-                        dcc.Input(id="als-lambda", type="number", value=100000, style={"width": "100px", **als_lambda_style}),
-                        dbc.Tooltip("Smoothness parameter for ALS", target="als-lambda"),
-                    ],
-                    width="auto",
-                ),
-                dbc.Col(
-                    [
-                        html.Span("P", id="p-label", style={"margin-right": "5px", **als_p_style}),
-                        dcc.Input(id="als-p", type="number", value=0.01, style={"width": "100px", **als_p_style}),
-                        dbc.Tooltip("Asymmetry parameter for ALS", target="als-p"),
-                    ],
-                    width="auto",
-                ),
-            ],
-            align="center",
-        )
-
-    ]
 @app.callback(
     Output('tissue-dropdown', 'style'),
     Input('peak-detection-method', 'value'),
 )
 def toggle_tissue_dropdown(selected_method):
     if selected_method == 'tissue':
-        return {'position': 'relative', 'z-index': 1051 }
+        return {'display': 'block', 'position': 'relative', 'z-index': 1051}
     return {'display': 'none'}
+
+@app.callback(
+    Output('baseline-method-params', 'children'),
+    Input('baseline-method', 'value')
+)
+def update_baseline_params_layout(method):
+    poly_style = {'display': 'block'} if method == 'poly' else {'display': 'none'}
+    bubble_style = {'display': 'block'} if method == 'bubble' else {'display': 'none'}
+    als_style = {'display': 'block'} if method == 'als' else {'display': 'none'}
+
+    return [
+        dbc.Row([
+            dbc.Col(dbc.Input(id='poly-order', type='number', min=1, max=10, value=4, style={'width': '100px'}), width=2),
+            dbc.Col(html.Span(" (Polynomial Order)", style={'margin-left': '5px'}), width='auto'),
+        ], style=poly_style),
+        dbc.Row([
+            dbc.Col(dbc.Input(id='bubble-width', type='number', min=1, max=100, value=50, style={'width': '100px'}), width=2),
+            dbc.Col(html.Span(" (Bubble Width)", style={'margin-left': '5px'}), width='auto'),
+        ], style=bubble_style),
+        dbc.Row([
+            dbc.Col(dbc.Input(id='als-lambda', type='number', value=100000, style={'width': '100px'}), width=2),
+            dbc.Col(html.Span(" (Lambda)", style={'margin-left': '5px'}), width='auto'),
+            dbc.Col(dbc.Input(id='als-p', type='number', value=0.01, style={'width': '100px'}), width=2),
+            dbc.Col(html.Span(" (P)", style={'margin-left': '5px'}), width='auto'),
+        ], style=als_style),
+    ]
+
+@app.callback(
+    [Output('quantile-input', 'style'),
+     Output('reference-peak-input', 'style')],
+    Input('norm-method-combined', 'value')
+)
+def update_norm_input_visibility(norm_method):
+    quantile_style = {'display': 'block'} if norm_method in ['quantile_minmax', 'quantile_vector'] else {'display': 'none'}
+    reference_style = {'display': 'block'} if norm_method == 'reference' else {'display': 'none'}
+    return quantile_style, reference_style
+
+@app.callback(
+    Output("collapse", "is_open"),
+    Input("collapse-button", "n_clicks"),
+    State("collapse", "is_open"),
+)
+def toggle_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
 def preprocess_spectrum(data):
     """Preprocess the spectrum by applying various operations."""
     if data.empty:
@@ -619,6 +649,7 @@ def preprocess_spectrum(data):
     elif len(spectrum) > expected_length:
         spectrum = spectrum[:expected_length]
     return spectrum
+
 def predict_tissue_type(selected_files, tissue_types=None):
     if tissue_types is None:
         tissue_types = ['Adipose tissue', 'Bone', 'Cartilage', 'Skeletal Muscle', 'Tendon']
@@ -704,6 +735,7 @@ def update_file_dropdown(contents, n_clicks, filenames, current_values, stored_v
         else:
             return [], [], {}, {}
     return [], [], {}, {}
+
 @app.callback(
     Output('spectrum-dropdown', 'options'),
     Input('file-dropdown', 'value'),
@@ -713,6 +745,7 @@ def update_spectrum_dropdown(selected_files):
         return []
     options = [{'label': filename, 'value': filename} for filename in selected_files]
     return options
+
 @app.callback(
     Output('color-pickers', 'children'),
     Input('file-dropdown', 'value'),
@@ -731,23 +764,52 @@ def update_color_pickers(selected_files, filenames):
         for filename in selected_files
     ]
     return color_pickers
-def process_spectrum(spectrum, savgol_checked, savgol_window, savgol_order, baseline_checked, baseline_method, poly_order=None, bubble_width=None, als_lambda=None, als_p=None, norm_checked=None, norm_method_combined=None, quantile=None, reference_peak=None):
-    if savgol_checked and savgol_window and savgol_order:
+
+def process_spectrum(
+    spectrum,
+    savgol_checked=False,
+    savgol_window=11,
+    savgol_order=3,
+    baseline_checked=False,
+    baseline_method='poly',
+    poly_order=4,
+    bubble_width=50,
+    als_lambda=100000,
+    als_p=0.01,
+    norm_checked=False,
+    norm_method_combined='max_minmax',
+    quantile=0.95,
+    reference_peak=None,
+    cosmic_ray_checked=False,
+    cosmic_ray_window=5,
+    cosmic_ray_threshold=3
+):
+    # Step 1: Remove cosmic rays (if enabled)
+    if cosmic_ray_checked:
+        spectrum[1, :] = remove_cosmic_rays(
+            spectrum[1, :],
+            window_size=cosmic_ray_window,
+            threshold=cosmic_ray_threshold
+        )
+    # Step 2: Apply Savitzky-Golay filter (if enabled)
+    if savgol_checked:
         try:
             spectrum[1, :] = savgol_filter(spectrum[1, :], savgol_window, savgol_order)
         except Exception as e:
             print(f"Error applying Savitzky-Golay filter: {e}")
+    # Step 3: Apply baseline removal (if enabled)
     if baseline_checked:
-        if baseline_method == 'poly' and poly_order:
+        if baseline_method == 'poly':
             spectrum[1, :], _ = polynomial_fitting(spectrum, poly_order)
-        elif baseline_method == 'bubble' and bubble_width:
+        elif baseline_method == 'bubble':
             baseline = bubblefill(spectrum[1, :], bubble_width)[1]
             spectrum[1, :] = spectrum[1, :] - baseline
-        elif baseline_method == 'als' and als_lambda is not None and als_p is not None:
+        elif baseline_method == 'als':
             baseline = baseline_als_optimized(spectrum[1, :], lam=als_lambda, p=als_p)
             spectrum[1, :] = spectrum[1, :] - baseline
-    if norm_checked and norm_method_combined:
-        if norm_method_combined in ['max_minmax', 'quantile_minmax'] and quantile is not None:
+    # Step 4: Apply normalization (if enabled)
+    if norm_checked:
+        if norm_method_combined in ['max_minmax', 'quantile_minmax']:
             spectrum = normalize_spectrum_minmax(spectrum, quantile=float(quantile) if norm_method_combined == 'quantile_minmax' else 1.0)
         elif norm_method_combined in ['max_vector', 'quantile_vector']:
             spectrum = normalize_spectrum_vect(spectrum)
@@ -756,14 +818,17 @@ def process_spectrum(spectrum, savgol_checked, savgol_window, savgol_order, base
         elif norm_method_combined == 'reference' and reference_peak is not None:
             spectrum = normalize_spectrum_reference(spectrum, reference_peak)
     return spectrum
+
 def calculate_snr(spectrum):
     signal = np.mean(spectrum[1, :])
     noise = np.std(spectrum[1, :])
     return signal / noise if noise != 0 else 0
+
 def update_graph_and_table(
     contents, selected_files, savgol_checked, savgol_window, savgol_order,
     baseline_checked, baseline_method, poly_order, bubble_width, als_lambda, als_p,
     norm_checked, norm_method_combined, quantile, reference_peak,
+    cosmic_ray_checked, cosmic_ray_window, cosmic_ray_threshold,
     detection_method, selected_tissue, peak_height,
     peak_distance, selected_spectrum, color_values,
     timestamp, color_pickers, delimiter, skiprows, x_min, x_max,
@@ -812,29 +877,24 @@ def update_graph_and_table(
             else:
                 x_axis_truncated = x_axis
                 original_spectrum_truncated = original_spectrum
-            # Ensure parameters are not None before passing them
-            savgol_window = savgol_window if savgol_window is not None else 11
-            savgol_order = savgol_order if savgol_order is not None else 3
-            baseline_method = baseline_method if baseline_method else 'poly'
-            poly_order = poly_order if poly_order is not None else 4
-            bubble_width = bubble_width if bubble_width is not None else 50
-            als_lambda = als_lambda if als_lambda is not None else 100000
-            als_p = als_p if als_p is not None else 0.01
             spectrum = process_spectrum(
                 spectrum,
-                'apply' in savgol_checked if savgol_checked else False,
+                savgol_checked,
                 savgol_window,
                 savgol_order,
-                'apply' in baseline_checked if baseline_checked else False,
+                baseline_checked,
                 baseline_method,
                 poly_order,
                 bubble_width,
                 als_lambda,
                 als_p,
-                'apply' in norm_checked if norm_checked else False,
+                norm_checked,
                 norm_method_combined,
                 quantile,
                 reference_peak,
+                cosmic_ray_checked,
+                cosmic_ray_window,
+                cosmic_ray_threshold,
             )
             peaks_positions, peaks_heights = [], []
             if detection_method == 'auto':
@@ -934,10 +994,12 @@ def update_graph_and_table(
                     html.Td(tissue_icons)
                 ], id={'type': 'table-row', 'index': str(position)}))
     return fig_original, fig_processed, table_rows, feedback_message, savgol_valid, savgol_invalid, savgol_feedback
+
 def update_snr(selected_files, baseline_method, savgol_checked, savgol_window, savgol_order,
                norm_checked, norm_method_combined, quantile, reference_peak,
                contents, filenames, delimiter, skiprows, x_min, x_max,
-               baseline_checked, poly_order, bubble_width, als_lambda, als_p):
+               baseline_checked, poly_order, bubble_width, als_p, als_lambda,
+               cosmic_ray_checked, cosmic_ray_window, cosmic_ray_threshold):
     if not selected_files or not contents:
         return []
     snr_values = []
@@ -967,19 +1029,22 @@ def update_snr(selected_files, baseline_method, savgol_checked, savgol_window, s
                     spectrum = spectrum[:, mask]
                 spectrum = process_spectrum(
                     spectrum,
-                    'apply' in savgol_checked if savgol_checked else False,
+                    savgol_checked,
                     savgol_window,
                     savgol_order,
-                    'apply' in baseline_checked if baseline_checked else False,
+                    baseline_checked,
                     baseline_method,
                     poly_order,
                     bubble_width,
                     als_lambda,
                     als_p,
-                    'apply' in norm_checked if norm_checked else False,
+                    norm_checked,
                     norm_method_combined,
                     quantile,
-                    reference_peak
+                    reference_peak,
+                    cosmic_ray_checked,
+                    cosmic_ray_window,
+                    cosmic_ray_threshold
                 )
                 snr = calculate_snr(spectrum)
                 snr_values.append((filename, snr))
@@ -988,6 +1053,7 @@ def update_snr(selected_files, baseline_method, savgol_checked, savgol_window, s
                 continue
     snr_output = [html.P(f"{filename}: {snr:.2f}") for filename, snr in snr_values]
     return snr_output
+
 @app.callback(
     [
         Output('original-spectrum', 'figure'),
@@ -1016,6 +1082,9 @@ def update_snr(selected_files, baseline_method, savgol_checked, savgol_window, s
         Input('norm-method-combined', 'value'),
         Input('quantile-input', 'value'),
         Input('reference-peak-input', 'value'),
+        Input('cosmic-ray-checkbox', 'value'),
+        Input('cosmic-ray-window', 'value'),
+        Input('cosmic-ray-threshold', 'value'),
         Input('peak-detection-method', 'value'),
         Input('tissue-dropdown', 'value'),
         Input('peak-height', 'value'),
@@ -1040,6 +1109,7 @@ def update_output_and_snr(
     contents, selected_files, savgol_checked, savgol_window, savgol_order,
     baseline_checked, baseline_method, poly_order, bubble_width, als_lambda, als_p,
     norm_checked, norm_method_combined, quantile, reference_peak,
+    cosmic_ray_checked, cosmic_ray_window, cosmic_ray_threshold,
     detection_method, selected_tissue, peak_height,
     peak_distance, selected_spectrum, color_values,
     timestamp, color_pickers, delimiter, skiprows, x_min, x_max,
@@ -1049,6 +1119,7 @@ def update_output_and_snr(
         contents, selected_files, savgol_checked, savgol_window, savgol_order,
         baseline_checked, baseline_method, poly_order, bubble_width, als_lambda, als_p,
         norm_checked, norm_method_combined, quantile, reference_peak,
+        cosmic_ray_checked, cosmic_ray_window, cosmic_ray_threshold,
         detection_method, selected_tissue, peak_height,
         peak_distance, selected_spectrum, color_values,
         timestamp, color_pickers, delimiter, skiprows, x_min, x_max,
@@ -1058,7 +1129,8 @@ def update_output_and_snr(
         selected_files, baseline_method, savgol_checked, savgol_window, savgol_order,
         norm_checked, norm_method_combined, quantile, reference_peak,
         contents, selected_files, delimiter, skiprows, x_min, x_max,
-        baseline_checked, poly_order, bubble_width, als_lambda, als_p
+        baseline_checked, poly_order, bubble_width, als_p, als_lambda,
+        cosmic_ray_checked, cosmic_ray_window, cosmic_ray_threshold
     )
     tissue_type_output = []
     if predictions:
@@ -1066,6 +1138,7 @@ def update_output_and_snr(
             html.Ul([html.Li(f"{filename}: {tissue_type}") for filename, tissue_type in predictions.items()])
         ])
     return fig_original, fig_processed, table_rows, feedback_message, savgol_valid, savgol_invalid, savgol_feedback, snr_output, tissue_type_output
+
 @app.callback(
     Output("download-raw-data", "data"),
     Input("export-raw-button", "n_clicks"),
@@ -1091,6 +1164,7 @@ def export_raw_data(n_clicks, selected_files, contents, filenames, delimiter, sk
             zip_file.writestr(f"{filename.split('.')[0]}_raw.csv", csv_buffer.getvalue())
     zip_file.close()
     return dcc.send_bytes(zip_buffer.getvalue(), "raw_data.zip")
+
 @app.callback(
     Output("download-processed-data", "data"),
     Input("export-processed-button", "n_clicks"),
@@ -1112,11 +1186,14 @@ def export_raw_data(n_clicks, selected_files, contents, filenames, delimiter, sk
     State('norm-method-combined', 'value'),
     State('quantile-input', 'value'),
     State('reference-peak-input', 'value'),
+    State('cosmic-ray-checkbox', 'value'),
+    State('cosmic-ray-window', 'value'),
+    State('cosmic-ray-threshold', 'value'),
     State('x-min', 'value'),
     State('x-max', 'value'),
     prevent_initial_call=True
 )
-def export_processed_data(n_clicks, selected_files, contents, filenames, delimiter, skiprows, savgol_checked, savgol_window, savgol_order, baseline_checked, baseline_method, poly_order, bubble_width, als_lambda, als_p, norm_checked, norm_method_combined, quantile, reference_peak, x_min, x_max):
+def export_processed_data(n_clicks, selected_files, contents, filenames, delimiter, skiprows, savgol_checked, savgol_window, savgol_order, baseline_checked, baseline_method, poly_order, bubble_width, als_lambda, als_p, norm_checked, norm_method_combined, quantile, reference_peak, cosmic_ray_checked, cosmic_ray_window, cosmic_ray_threshold, x_min, x_max):
     if n_clicks is None or not selected_files:
         raise PreventUpdate
     zip_buffer = BytesIO()
@@ -1138,13 +1215,32 @@ def export_processed_data(n_clicks, selected_files, contents, filenames, delimit
                 elif x_max is not None:
                     mask = x_axis <= x_max
                 spectrum = spectrum[:, mask]
-            spectrum = process_spectrum(spectrum, 'apply' in savgol_checked, savgol_window, savgol_order, 'apply' in baseline_checked, baseline_method, poly_order, bubble_width, als_lambda, als_p, 'apply' in norm_checked, norm_method_combined, quantile, reference_peak)
+            spectrum = process_spectrum(
+                spectrum,
+                'apply' in savgol_checked,
+                savgol_window,
+                savgol_order,
+                'apply' in baseline_checked,
+                baseline_method,
+                poly_order,
+                bubble_width,
+                als_lambda,
+                als_p,
+                'apply' in norm_checked,
+                norm_method_combined,
+                quantile,
+                reference_peak,
+                'apply' in cosmic_ray_checked,
+                cosmic_ray_window,
+                cosmic_ray_threshold
+            )
             processed_data = pd.DataFrame({'Raman Shift': spectrum[0, :], 'Intensity': spectrum[1, :]})
             csv_buffer = StringIO()
             processed_data.to_csv(csv_buffer, index=False)
             zip_file.writestr(f"{filename.split('.')[0]}_processed.csv", csv_buffer.getvalue())
     zip_file.close()
     return dcc.send_bytes(zip_buffer.getvalue(), "processed_data.zip")
+
 @app.callback(
     Output("download-all-processed-data", "data"),
     Input("export-all-processed-button", "n_clicks"),
@@ -1166,11 +1262,14 @@ def export_processed_data(n_clicks, selected_files, contents, filenames, delimit
     State('norm-method-combined', 'value'),
     State('quantile-input', 'value'),
     State('reference-peak-input', 'value'),
+    State('cosmic-ray-checkbox', 'value'),
+    State('cosmic-ray-window', 'value'),
+    State('cosmic-ray-threshold', 'value'),
     State('x-min', 'value'),
     State('x-max', 'value'),
     prevent_initial_call=True
 )
-def export_all_processed_data(n_clicks, selected_files, contents, filenames, delimiter, skiprows, savgol_checked, savgol_window, savgol_order, baseline_checked, baseline_method, poly_order, bubble_width, als_lambda, als_p, norm_checked, norm_method_combined, quantile, reference_peak, x_min, x_max):
+def export_all_processed_data(n_clicks, selected_files, contents, filenames, delimiter, skiprows, savgol_checked, savgol_window, savgol_order, baseline_checked, baseline_method, poly_order, bubble_width, als_lambda, als_p, norm_checked, norm_method_combined, quantile, reference_peak, cosmic_ray_checked, cosmic_ray_window, cosmic_ray_threshold, x_min, x_max):
     if n_clicks is None or not selected_files:
         raise PreventUpdate
     zip_buffer = BytesIO()
@@ -1192,13 +1291,32 @@ def export_all_processed_data(n_clicks, selected_files, contents, filenames, del
                 elif x_max is not None:
                     mask = x_axis <= x_max
                 spectrum = spectrum[:, mask]
-            spectrum = process_spectrum(spectrum, 'apply' in savgol_checked, savgol_window, savgol_order, 'apply' in baseline_checked, baseline_method, poly_order, bubble_width, als_lambda, als_p, 'apply' in norm_checked, norm_method_combined, quantile, reference_peak)
+            spectrum = process_spectrum(
+                spectrum,
+                'apply' in savgol_checked,
+                savgol_window,
+                savgol_order,
+                'apply' in baseline_checked,
+                baseline_method,
+                poly_order,
+                bubble_width,
+                als_lambda,
+                als_p,
+                'apply' in norm_checked,
+                norm_method_combined,
+                quantile,
+                reference_peak,
+                'apply' in cosmic_ray_checked,
+                cosmic_ray_window,
+                cosmic_ray_threshold
+            )
             processed_data = pd.DataFrame({'Raman Shift': spectrum[0, :], 'Intensity': spectrum[1, :]})
             csv_buffer = StringIO()
             processed_data.to_csv(csv_buffer, index=False)
             zip_file.writestr(f"{filename.split('.')[0]}_processed.csv", csv_buffer.getvalue())
     zip_file.close()
     return dcc.send_bytes(zip_buffer.getvalue(), "all_processed_data.zip")
+
 @app.callback(
     Output("download-table-data", "data"),
     Input("export-table-button", "n_clicks"),
@@ -1227,6 +1345,7 @@ def export_table_data(n_clicks, selected_spectrum, table_rows):
             })
     df = pd.DataFrame(data)
     return dcc.send_data_frame(df.to_csv, f"{selected_spectrum}_peaks_table.csv", index=False)
+
 @app.callback(
     Output("download-all-tables-data", "data"),
     Input("export-all-tables-button", "n_clicks"),
@@ -1262,5 +1381,6 @@ def export_all_tables_data(n_clicks, selected_files, table_rows):
             zip_file.writestr(f"{filename.split('.')[0]}_peaks_table.csv", csv_buffer.getvalue())
     zip_file.close()
     return dcc.send_bytes(zip_buffer.getvalue(), "all_peaks_tables.zip")
+
 if __name__ == '__main__':
     app.run(debug=True)
