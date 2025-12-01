@@ -70,7 +70,7 @@ app.layout = dbc.Container([
 
             # App title and description
             html.H2("Raman-Assisted Molecular Biological Observations", style={'margin-top': '4px', 'text-align': 'center'}),
-            html.P("Upload your Raman spectra files and analyze them with various preprocessing options.", style={'text-align': 'center'}),
+            html.P("Upload your Raman spectra files of Adipose tissue, Bone, Cartilage, Skeletal Muscle or Tendon.", style={'text-align': 'center'}),
 
             # Advanced CSV settings section
             html.Div([
@@ -434,6 +434,21 @@ app.layout = dbc.Container([
 
             dcc.Download(id="download-table-data"),
             dcc.Download(id="download-all-tables-data"),
+            
+            dcc.Markdown('''
+                The Raman spectroscopy peak assignments for various biological tissues are documented across several scientific articles:
+
+                - **Adipose tissue:** : Kozielski, K. *et al.* Optics Express **19**, 22892–22907 (2011). [10.1364/OE.19.022892](https://doi.org/10.1364/OE.19.022892)
+
+                - **Skeletal muscle:** : Kozielski, K. *et al.* Optics Express **19**, 22892–22907 (2011). [10.1364/OE.19.022892](https://doi.org/10.1364/OE.19.022892) & Plesia, S. *et al.* ACS Chemical Neuroscience **12**, 3268–3278 (2021). [10.1021/acschemneuro.0c00794](https://doi.org/10.1021/acschemneuro.0c00794)
+
+                - **Cartilage:** : Esmonde-White, K. *et al.* Applied Spectroscopy **68**, 1366–1374 (2014). [10.1366/14-07592](https://doi.org/10.1366/14-07592)
+
+                - **Tendon:** : Esmonde-White, K. *et al.* Applied Spectroscopy **68**, 1366–1374 (2014). [10.1366/14-07592](https://doi.org/10.1366/14-07592)
+
+                - **Bone:** : Unal, B. *et al.* Analyst **146**, 6269–6279 (2021). [10.1039/D1AN01560E](https://doi.org/10.1039/D1AN01560E)
+                ''', style={'align-self': 'center', 'margin': '10px', 'font-size': '12px'}),
+
         ], style={'width': '30%', 'height': '90vh', 'overflow-y': 'auto', 'margin': '10px', 'padding': '10px', 'box-shadow': '0 0 10px rgba(0,0,0,0.1)'})  # Right column style
     ], style={'display': 'flex', 'flex-direction': 'row', 'justify-content': 'space-between', 'height': '100vh'})  # Main row container
 ], fluid=True, className='dashboard-container', style={'height': '100vh'})  # Main app container
@@ -627,6 +642,7 @@ def predict_tissue_type(selected_files, tissue_types=None):
     predicted_types = [tissue_types[np.argmax(pred)] for pred in predictions]
     predictions_dict = {filename: tissue_type for filename, tissue_type in zip(filenames, predicted_types)}
     return predictions_dict
+
 @app.callback(
     Output('file-dropdown', 'options'),
     Output('file-dropdown', 'value'),
