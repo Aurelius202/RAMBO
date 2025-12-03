@@ -10,7 +10,7 @@
 **A Dash-based application for interactive analysis and visualization of Raman spectra in biomedical research.**
 
 ## 📌 Overview
-RAMBO is designed to streamline the analysis of Raman spectroscopy data for biological tissues (e.g., bone, cartilage, muscle). It provides an interactive web interface for preprocessing, peak detection, normalization, and visualization, with optional deep learning integration for advanced analysis.
+RAMBO is designed to streamline the analysis of Raman spectroscopy data for five biological tissues (bone, cartilage, skeletal muscle, tendon and adipose tissue). It provides an interactive web interface for preprocessing, peak detection, normalization, and visualization, with optional deep learning integration for automated tissue classification.
 
 ## ✨ Features
 - **Interactive Dashboard**: Upload, process, and visualize Raman spectra in real-time.
