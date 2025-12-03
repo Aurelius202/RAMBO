@@ -185,7 +185,7 @@ app.layout = dbc.Container([
                                 ),
                             ],
                             align="center",
-                            style={'margin-top': '10px', 'display': 'none'}
+                            style={'margin-top': '10px', 'display': 'block'}
                         ),
                     ]
                 )
@@ -235,7 +235,7 @@ app.layout = dbc.Container([
                                 ),
                             ],
                             align="center",
-                            style={'margin-top': '10px', 'display': 'none'}
+                            style={'margin-top': '10px', 'display': 'block'}
                         ),
                     ]
                 )

@@ -1,212 +1,498 @@
+
 {
-    "ν2PO4 (Mineral, Phosphate)": {
+    "\ud835\udece2PO4 (Mineral, Phosphate) (430)": {
         "peak_position": 430,
-        "variability_range": [425, 435],
-        "biochemical_component": "ν2PO4 (Mineral, Phosphate)",
-        "tissue": ["Bone"],
-        "references": ["10.1039/D1AN01560E"]
+        "variability_range": [
+            425,
+            435
+        ],
+        "biochemical_component": "\ud835\udece2PO4 (Mineral, Phosphate)",
+        "tissue": [
+            "Bone"
+        ],
+        "references": [
+            "10.1039/D1AN01560E"
+        ]
     },
-    "ν4PO4 (Mineral, Phosphate)": {
+    "\ud835\udece4PO4 (Mineral, Phosphate) (600)": {
         "peak_position": 600,
-        "variability_range": [595, 605],
-        "biochemical_component": "ν4PO4 (Mineral, Phosphate)",
-        "tissue": ["Bone"],
-        "references": ["10.1039/D1AN01560E"]
+        "variability_range": [
+            595,
+            605
+        ],
+        "biochemical_component": "\ud835\udece4PO4 (Mineral, Phosphate)",
+        "tissue": [
+            "Bone"
+        ],
+        "references": [
+            "10.1039/D1AN01560E"
+        ]
     },
-    "νC-C Collagen": {
+    "\ud835\udeceC-C Collagen\u00a0 (822)": {
         "peak_position": 822,
-        "variability_range": [817, 827],
-        "biochemical_component": "νC-C Collagen",
-        "tissue": ["Cartilage", "Tendon"],
-        "references": ["10.1366/14-07592"]
+        "variability_range": [
+            817,
+            827
+        ],
+        "biochemical_component": "\ud835\udeceC-C Collagen\u00a0",
+        "tissue": [
+            "Cartilage",
+            "Tendon"
+        ],
+        "references": [
+            "10.1366/14-075921"
+        ]
     },
-    "νC-C Hydroxyproline": {
+    "\ud835\udeceC-C Hydroxyproline (850)": {
         "peak_position": 850,
-        "variability_range": [845, 855],
-        "biochemical_component": "νC-C Hydroxyproline",
-        "tissue": ["Cartilage", "Tendon", "Bone"],
-        "references": ["10.1366/14-07592", "10.1039/D1AN01560E"]
+        "variability_range": [
+            845,
+            855
+        ],
+        "biochemical_component": "\ud835\udeceC-C Hydroxyproline",
+        "tissue": [
+            "Cartilage",
+            "Tendon"
+        ],
+        "references": [
+            "10.1366/14-075921"
+        ]
     },
-    "Proline (Pro) (Organic, Collagen I)": {
+    "Proline (Pro) (Organic, Collagen I) (855)": {
         "peak_position": 855,
-        "variability_range": [850, 860],
+        "variability_range": [
+            850,
+            860
+        ],
         "biochemical_component": "Proline (Pro) (Organic, Collagen I)",
-        "tissue": ["Bone"],
-        "references": ["10.1039/D1AN01560E"]
+        "tissue": [
+            "Bone"
+        ],
+        "references": [
+            "10.1039/D1AN01560E"
+        ]
     },
-    "C-C stretch, α-helix": {
+    "\ud835\udeceC-C Hydroxyproline (875)": {
+        "peak_position": 875,
+        "variability_range": [
+            870,
+            880
+        ],
+        "biochemical_component": "\ud835\udeceC-C Hydroxyproline",
+        "tissue": [
+            "Cartilage",
+            "Tendon",
+            "Bone"
+        ],
+        "references": [
+            "10.1366/14-075921",
+            "10.1039/D1AN01560E"
+        ]
+    },
+    "Proline (Pro) (Organic, Collagen I) (920)": {
+        "peak_position": 920,
+        "variability_range": [
+            915,
+            925
+        ],
+        "biochemical_component": "Proline (Pro) (Organic, Collagen I)",
+        "tissue": [
+            "Bone"
+        ],
+        "references": [
+            "10.1039/D1AN01560E"
+        ]
+    },
+    "C-C stretch, a-helix\u00a0 (938)": {
         "peak_position": 938,
-        "variability_range": [933, 943],
-        "biochemical_component": "C-C stretch, α-helix",
-        "tissue": ["Cartilage", "Tendon", "Bone"],
-        "references": ["10.1366/14-07592", "10.1039/D1AN01560E"]
+        "variability_range": [
+            933,
+            943
+        ],
+        "biochemical_component": "C-C stretch, a-helix\u00a0",
+        "tissue": [
+            "Cartilage",
+            "Tendon",
+            "Skeletal muscle"
+        ],
+        "references": [
+            "10.1366/14-075921",
+            "10.1021/acschemneuro.0c00794"
+        ]
     },
-    "ν1PO4 (Mineral, Phosphate)": {
+    "\u03bd1PO4 (Mineral, Phosphate) (960)": {
         "peak_position": 960,
-        "variability_range": [955, 965],
-        "biochemical_component": "ν1PO4 (Mineral, Phosphate)",
-        "tissue": ["Cartilage", "Bone"],
-        "references": ["10.1366/14-07592", "10.1039/D1AN01560E"]
+        "variability_range": [
+            955,
+            965
+        ],
+        "biochemical_component": "\u03bd1PO4 (Mineral, Phosphate)",
+        "tissue": [
+            "Bone"
+        ],
+        "references": [
+            "10.1039/D1AN01560E"
+        ]
     },
-    "Ring breathing of proteins": {
+    "Ring breathing of proteins (1002)": {
         "peak_position": 1002,
-        "variability_range": [997, 1007],
+        "variability_range": [
+            997,
+            1007
+        ],
         "biochemical_component": "Ring breathing of proteins",
-        "tissue": ["Cartilage", "Tendon", "Bone"],
-        "references": ["10.1366/14-07592", "10.1039/D1AN01560E"]
+        "tissue": [
+            "Cartilage",
+            "Tendon",
+            "Skeletal muscle",
+            "Bone"
+        ],
+        "references": [
+            "10.1366/14-075921",
+            "10.1039/D1AN01560E",
+            "10.1021/acschemneuro.0c00794"
+        ]
     },
-    "Tryptophan, Proteins": {
+    "Tryptophan, Proteins\u00a0 (1042)": {
         "peak_position": 1042,
-        "variability_range": [1040, 1045],
-        "biochemical_component": "Tryptophan, Proteins",
-        "tissue": ["Cartilage", "Skeletal Muscle"],
-        "references": ["10.1366/14-07592", "10.1021/acschemneuro.0c00794"]
+        "variability_range": [
+            1040,
+            1045
+        ],
+        "biochemical_component": "Tryptophan, Proteins\u00a0",
+        "tissue": [
+            "Skeletal muscle"
+        ],
+        "references": [
+            "10.1021/acschemneuro.0c00794"
+        ]
     },
-    "OSO3-, symmetric stretch of chondroitin sulfate": {
+    "OSO3-, symmetric stretch of chondroitin sulfate\u00a0 (1063)": {
         "peak_position": 1063,
-        "variability_range": [1058, 1068],
-        "biochemical_component": "OSO3-, symmetric stretch of chondroitin sulfate",
-        "tissue": ["Skeletal Muscle", "Cartilage"],
-        "references": ["10.1364/OE.19.022892", "10.1366/14-07592"]
+        "variability_range": [
+            1058,
+            1068
+        ],
+        "biochemical_component": "OSO3-, symmetric stretch of chondroitin sulfate\u00a0",
+        "tissue": [
+            "Cartilage"
+        ],
+        "references": [
+            "10.1366/14-075921"
+        ]
     },
-    "C-C stretch of lipids, Palmitic acid, Proline": {
+    "C-C stretch of lipids, Palmitic acid, Proline (1065)": {
         "peak_position": 1065,
-        "variability_range": [1060, 1070],
+        "variability_range": [
+            1060,
+            1070
+        ],
         "biochemical_component": "C-C stretch of lipids, Palmitic acid, Proline",
-        "tissue": ["Adipose tissue", "Skeletal Muscle"],
-        "references": ["10.1364/OE.19.022892"]
+        "tissue": [
+            "Adipose tissue",
+            "Skeletal muscle"
+        ],
+        "references": [
+            "10.1364/OE.19.022892"
+        ]
     },
-    "ν1CO3 (Mineral, Carbonate)": {
+    "\u03bd1CO3 (Mineral, Carbonate) (1070)": {
         "peak_position": 1070,
-        "variability_range": [1065, 1075],
-        "biochemical_component": "ν1CO3 (Mineral, Carbonate)",
-        "tissue": ["Cartilage"],
-        "references": ["10.1366/14-07592"]
+        "variability_range": [
+            1065,
+            1075
+        ],
+        "biochemical_component": "\u03bd1CO3 (Mineral, Carbonate)",
+        "tissue": [
+            "Bone"
+        ],
+        "references": [
+            "10.1039/D1AN01560E"
+        ]
     },
-    "Lipids, Phospholipids, Tryptophan, Nucleic acids": {
+    "Lipids, Phospholipids, (1078)": {
         "peak_position": 1078,
-        "variability_range": [1076, 1080],
-        "biochemical_component": "Lipids, Phospholipids, Tryptophan, Nucleic acids",
-        "tissue": ["Cartilage", "Skeletal Muscle"],
-        "references": ["10.1366/14-07592", "10.1021/acschemneuro.0c00794"]
+        "variability_range": [
+            1076,
+            1080
+        ],
+        "biochemical_component": "Lipids, Phospholipids,",
+        "tissue": [
+            "Skeletal muscle"
+        ],
+        "references": [
+            "10.1021/acschemneuro.0c00794"
+        ]
     },
-    "Tryptophan, Valine, Proteins, Glucose, Lipids, Phospholipids": {
+    "Tryptophan, Valine, Proteins, (1124)": {
         "peak_position": 1124,
-        "variability_range": [1120, 1128],
-        "biochemical_component": "Tryptophan, Valine, Proteins, Glucose, Lipids, Phospholipids",
-        "tissue": ["Cartilage", "Skeletal Muscle"],
-        "references": ["10.1366/14-07592", "10.1021/acschemneuro.0c00794"]
+        "variability_range": [
+            1120,
+            1128
+        ],
+        "biochemical_component": "Tryptophan, Valine, Proteins,",
+        "tissue": [
+            "Skeletal muscle"
+        ],
+        "references": [
+            "10.1021/acschemneuro.0c00794"
+        ]
     },
-    "Tyrosine, Phenylalanine, Proteins": {
+    "Tyrosine, Phenylalanine, (1168)": {
         "peak_position": 1168,
-        "variability_range": [1165, 1172],
-        "biochemical_component": "Tyrosine, Phenylalanine, Proteins",
-        "tissue": ["Cartilage", "Skeletal Muscle"],
-        "references": ["10.1366/14-07592", "10.1021/acschemneuro.0c00794"]
+        "variability_range": [
+            1165,
+            1172
+        ],
+        "biochemical_component": "Tyrosine, Phenylalanine,",
+        "tissue": [
+            "Skeletal muscle"
+        ],
+        "references": [
+            "10.1021/acschemneuro.0c00794"
+        ]
     },
-    "Tyrosine, Phenylalanine, Hydroxyproline, Proteins": {
+    "Tyrosine, Phenylalanine, (1203)": {
         "peak_position": 1203,
-        "variability_range": [1200, 1207],
-        "biochemical_component": "Tyrosine, Phenylalanine, Hydroxyproline, Proteins",
-        "tissue": ["Cartilage", "Skeletal Muscle"],
-        "references": ["10.1366/14-07592", "10.1021/acschemneuro.0c00794"]
+        "variability_range": [
+            1200,
+            1207
+        ],
+        "biochemical_component": "Tyrosine, Phenylalanine,",
+        "tissue": [
+            "Skeletal muscle"
+        ],
+        "references": [
+            "10.1021/acschemneuro.0c00794"
+        ]
     },
-    "Amide III": {
+    "Amide III (1250)": {
         "peak_position": 1250,
-        "variability_range": [1220, 1280],
+        "variability_range": [
+            1220,
+            1280
+        ],
         "biochemical_component": "Amide III",
-        "tissue": ["Skeletal Muscle", "Cartilage"],
-        "references": ["10.1364/OE.19.022892", "10.1366/14-07592"]
+        "tissue": [
+            "Cartilage",
+            "Tendon"
+        ],
+        "references": [
+            "10.1366/14-075921"
+        ]
     },
-    "Amide III (Organic, Collagen I)": {
+    "Amide III (Organic, Collagen I) (1281)": {
         "peak_position": 1281,
-        "variability_range": [1243, 1320],
+        "variability_range": [
+            1243,
+            1320
+        ],
         "biochemical_component": "Amide III (Organic, Collagen I)",
-        "tissue": ["Bone"],
-        "references": ["10.1039/D1AN01560E"]
+        "tissue": [
+            "Bone"
+        ],
+        "references": [
+            "10.1039/D1AN01560E"
+        ]
     },
-    "Amide III, adenine, cytosine, CH2 inplane deformation (lipids)": {
+    "Amide III, adenine, cytosine, CH2 inplane deformation (lipids) (1258)": {
         "peak_position": 1258,
-        "variability_range": [1253, 1263],
+        "variability_range": [
+            1253,
+            1263
+        ],
         "biochemical_component": "Amide III, adenine, cytosine, CH2 inplane deformation (lipids)",
-        "tissue": ["Adipose tissue", "Skeletal Muscle"],
-        "references": ["10.1364/OE.19.022892"]
+        "tissue": [
+            "Adipose tissue",
+            "Skeletal muscle"
+        ],
+        "references": [
+            "10.1364/OE.19.022892"
+        ]
     },
-    "Proteins, Amide III (α-helix), Tyrosine, Tryptophan, Proline, Proteins, Fatty Acids, Phospholipids, Lipids": {
+    "Proteins, Amide III (\u03b1-helix), (1264)": {
         "peak_position": 1264,
-        "variability_range": [1260, 1269],
-        "biochemical_component": "Proteins, Amide III (α-helix), Tyrosine, Tryptophan, Proline, Proteins, Fatty Acids, Phospholipids, Lipids",
-        "tissue": ["Cartilage", "Skeletal Muscle"],
-        "references": ["10.1366/14-07592", "10.1021/acschemneuro.0c00794"]
+        "variability_range": [
+            1260,
+            1269
+        ],
+        "biochemical_component": "Proteins, Amide III (\u03b1-helix),",
+        "tissue": [
+            "Skeletal muscle"
+        ],
+        "references": [
+            "10.1021/acschemneuro.0c00794"
+        ]
     },
-    "Proteins, Amide III (α-helix)": {
+    "Proteins, Amide III (\u03b1-helix)\u00a0 (1292)": {
         "peak_position": 1292,
-        "variability_range": [1275, 1310],
-        "biochemical_component": "Proteins, Amide III (α-helix)",
-        "tissue": ["Cartilage", "Skeletal Muscle"],
-        "references": ["10.1366/14-07592", "10.1021/acschemneuro.0c00794"]
+        "variability_range": [
+            1275,
+            1310
+        ],
+        "biochemical_component": "Proteins, Amide III (\u03b1-helix)\u00a0",
+        "tissue": [
+            "Skeletal muscle"
+        ],
+        "references": [
+            "10.1021/acschemneuro.0c00794"
+        ]
     },
-    "Proteins, Amide III, Fatty acids, Phospholipids, Cholesterol, Lipids": {
+    "Palmitic acid (1297)": {
+        "peak_position": 1297,
+        "variability_range": [
+            1292,
+            1302
+        ],
+        "biochemical_component": "Palmitic acid",
+        "tissue": [
+            "Adipose tissue",
+            "Skeletal muscle"
+        ],
+        "references": [
+            "10.1364/OE.19.022892"
+        ]
+    },
+    "Proteins, Amide III, Fatty acids, (1302)": {
         "peak_position": 1302,
-        "variability_range": [1300, 1305],
-        "biochemical_component": "Proteins, Amide III, Fatty acids, Phospholipids, Cholesterol, Lipids",
-        "tissue": ["Cartilage", "Skeletal Muscle"],
-        "references": ["10.1366/14-07592", "10.1021/acschemneuro.0c00794"]
+        "variability_range": [
+            1300,
+            1305
+        ],
+        "biochemical_component": "Proteins, Amide III, Fatty acids,",
+        "tissue": [
+            "Skeletal muscle"
+        ],
+        "references": [
+            "10.1021/acschemneuro.0c00794"
+        ]
     },
-    "Tryptophan, Valine, Proline, Proteins, Adenine, Guanine, Nucleic acids": {
+    "Tryptophan, Valine, Proline, (1332)": {
         "peak_position": 1332,
-        "variability_range": [1328, 1336],
-        "biochemical_component": "Tryptophan, Valine, Proline, Proteins, Adenine, Guanine, Nucleic acids",
-        "tissue": ["Cartilage", "Skeletal Muscle"],
-        "references": ["10.1366/14-07592", "10.1021/acschemneuro.0c00794"]
+        "variability_range": [
+            1328,
+            1336
+        ],
+        "biochemical_component": "Tryptophan, Valine, Proline,",
+        "tissue": [
+            "Skeletal muscle"
+        ],
+        "references": [
+            "10.1021/acschemneuro.0c00794"
+        ]
     },
-    "CH2/CH3 (lipids)": {
+    "CH2/CH3 (lipids) (1442)": {
         "peak_position": 1442,
-        "variability_range": [1437, 1448],
+        "variability_range": [
+            1437,
+            1448
+        ],
         "biochemical_component": "CH2/CH3 (lipids)",
-        "tissue": ["Adipose tissue", "Skeletal Muscle", "Cartilage", "Tendon", "Skeletal Muscle", "Bone"],
-        "references": ["10.1364/OE.19.022892", "10.1364/OE.19.022892", "10.1366/14-07592", "10.1366/14-07592", "10.1021/acschemneuro.0c00794", "10.1039/D1AN01560E"]
+        "tissue": [
+            "Adipose tissue",
+            "Skeletal muscle",
+            "Cartilage",
+            "Tendon",
+            "Skeletal muscle",
+            "Bone"
+        ],
+        "references": [
+            "10.1366/14-075921",
+            "10.1039/D1AN01560E",
+            "10.1021/acschemneuro.0c00794",
+            "10.1364/OE.19.022892"
+        ]
     },
-    "Amide I (Collagen amide C=O)": {
+    "Amide I (Collagen amide C=O) (1660)": {
         "peak_position": 1660,
-        "variability_range": [1620, 1700],
+        "variability_range": [
+            1620,
+            1700
+        ],
         "biochemical_component": "Amide I (Collagen amide C=O)",
-        "tissue": ["Skeletal Muscle", "Cartilage", "Bone"],
-        "references": ["10.1364/OE.19.022892", "10.1366/14-07592", "10.1039/D1AN01560E"]
+        "tissue": [
+            "Cartilage",
+            "Tendon",
+            "Bone"
+        ],
+        "references": [
+            "10.1366/14-075921",
+            "10.1039/D1AN01560E"
+        ]
     },
-    "Amide I, Lipid (C=O stretch)": {
+    "Amide I, Lipid (C55C stretch) (1653)": {
         "peak_position": 1653,
-        "variability_range": [1648, 1658],
-        "biochemical_component": "Amide I, Lipid (C=O stretch)",
-        "tissue": ["Adipose tissue", "Skeletal Muscle", "Skeletal Muscle"],
-        "references": ["10.1364/OE.19.022892", "10.1021/acschemneuro.0c00794"]
+        "variability_range": [
+            1648,
+            1658
+        ],
+        "biochemical_component": "Amide I, Lipid (C55C stretch)",
+        "tissue": [
+            "Adipose tissue",
+            "Skeletal muscle",
+            "Skeletal muscle"
+        ],
+        "references": [
+            "10.1021/acschemneuro.0c00794",
+            "10.1364/OE.19.022892"
+        ]
     },
-    "No assignment": {
+    "No assignment (2828)": {
         "peak_position": 2828,
-        "variability_range": [2823, 2833],
+        "variability_range": [
+            2823,
+            2833
+        ],
         "biochemical_component": "No assignment",
-        "tissue": ["Adipose tissue", "Skeletal Muscle"],
-        "references": ["10.1364/OE.19.022892"]
+        "tissue": [
+            "Adipose tissue",
+            "Skeletal muscle"
+        ],
+        "references": [
+            "10.1364/OE.19.022892"
+        ]
     },
-    "CH2 and CH of lipids and proteins": {
+    "CH2 and CH of lipids and proteins (2879)": {
         "peak_position": 2879,
-        "variability_range": [2874, 2884],
+        "variability_range": [
+            2874,
+            2884
+        ],
         "biochemical_component": "CH2 and CH of lipids and proteins",
-        "tissue": ["Adipose tissue"],
-        "references": ["10.1364/OE.19.022892"]
+        "tissue": [
+            "Adipose tissue"
+        ],
+        "references": [
+            "10.1364/OE.19.022892"
+        ]
     },
-    "CH band of lipids and proteins": {
+    "CH band of lipids and proteins (2914)": {
         "peak_position": 2914,
-        "variability_range": [2909, 2919],
+        "variability_range": [
+            2909,
+            2919
+        ],
         "biochemical_component": "CH band of lipids and proteins",
-        "tissue": ["Skeletal Muscle"],
-        "references": ["10.1364/OE.19.022892"]
+        "tissue": [
+            "Skeletal muscle"
+        ],
+        "references": [
+            "10.1364/OE.19.022892"
+        ]
     },
-    "Cholesterol and cholesterol ester": {
+    "Cholesterol and cholesterol ester (2987)": {
         "peak_position": 2987,
-        "variability_range": [2982, 2992],
+        "variability_range": [
+            2982,
+            2992
+        ],
         "biochemical_component": "Cholesterol and cholesterol ester",
-        "tissue": ["Adipose tissue", "Skeletal Muscle"],
-        "references": ["10.1364/OE.19.022892"]
+        "tissue": [
+            "Adipose tissue",
+            "Skeletal muscle"
+        ],
+        "references": [
+            "10.1364/OE.19.022892"
+        ]
     }
 }
