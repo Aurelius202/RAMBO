@@ -1,4 +1,5 @@
 # RAMBO: Raman Spectroscopy Analysis Tool
+![RAMBO Logo](./assets/logo.png)
 
 **A Dash-based application for interactive analysis and visualization of Raman spectra in biomedical research.**
 
@@ -23,3 +24,6 @@ git clone https://github.com/yourusername/RAMBO.git
 cd RAMBO
 pip install -r requirements.txt
 python dash_app.py
+
+![UniStra Logo](./assets/HTlogo.png)
+![UniBas Logo](./assets/UniBaslogo.png)
