@@ -16,7 +16,7 @@ RAMBO is designed to streamline the analysis of Raman spectroscopy data for five
 - **Interactive Dashboard**: Upload, process, and visualize Raman spectra in real-time.
 - **Preprocessing Tools**: Smoothing, baseline correction, and normalization.
 - **Peak Detection**: Automated identification of Raman peaks for biological tissues.
-- **Deep Learning Integration**: Optional TensorFlow/Keras models for spectral classification.
+- **Deep Learning Integration**: TensorFlow/Keras model for spectral classification.
 - **Export Options**: Save processed data and visualizations for further analysis.
 
 ## 🛠 Installation
